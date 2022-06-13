@@ -1,3 +1,7 @@
-# media server
+# compose
 
-This repository contains all the docker compose I use in my media server
+docker-compose files I use in my media server
+
+# config
+
+some useful config for my raspberry/odroid
