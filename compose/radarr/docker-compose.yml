@@ -1,0 +1,19 @@
+---
+version: "3"
+services:
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    volumes:
+        - /mnt/storage/download:/downloads
+        - /mnt/storage/movies:/movies
+        - /mnt/storage/odroid/compose/radarr/conf:/config
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+        - 7878:7878

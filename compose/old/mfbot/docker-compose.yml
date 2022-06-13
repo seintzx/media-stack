@@ -1,0 +1,15 @@
+---
+version: "3"
+services:
+  mfbot:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    container_name: mfbot
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/odroid/compose/mfbot/conf:/mfbot
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000

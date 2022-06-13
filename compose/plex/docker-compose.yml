@@ -1,0 +1,21 @@
+---
+version: "3"
+services:
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/tv:/tv
+      - /mnt/storage/movies:/movies
+      - /mnt/storage/odroid/compose/plex/conf:/config
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000
+        VERSION: docker
+        PLEX_CLAIM: #optional
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+        - 32400:32400

@@ -1,0 +1,23 @@
+---
+version: "3"
+services:
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:development
+    deploy:
+        resources:
+            reservations:
+                cpus: '2'
+    container_name: bazarr
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/tv:/tv
+      - /mnt/storage/movies:/movies
+      - /mnt/storage/odroid/compose/bazarr/conf:/config
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+        - 6767:6767

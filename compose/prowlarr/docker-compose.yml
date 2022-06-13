@@ -1,0 +1,17 @@
+---
+version: "3"
+services:
+  bazarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/odroid/compose/prowlarr/conf:/config
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+        - 9696:9696
