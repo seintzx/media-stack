@@ -1,7 +1,7 @@
 ---
 version: "3"
 services:
-  transmission:
+  qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     restart: unless-stopped

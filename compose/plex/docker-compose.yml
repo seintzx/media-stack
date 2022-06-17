@@ -14,7 +14,7 @@ services:
         PUID: 1000
         PGID: 1000
         VERSION: docker
-        PLEX_CLAIM: YOURCLAIM
+        PLEX_CLAIM: claim-ysnwJV4cGopGbAgW1VRQ
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
