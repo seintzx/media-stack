@@ -1,1 +1,31 @@
-conf/Caddyfile
+http://torrent.seintz.lan {
+    reverse_proxy 192.168.1.13:9091
+}
+
+http://radarr.seintz.lan {
+    reverse_proxy 192.168.1.13:7878
+}
+
+http://sonarr.seintz.lan {
+    reverse_proxy 192.168.1.13:8989
+}
+
+http://bazarr.seintz.lan {
+    reverse_proxy 192.168.1.13:6767
+}
+
+http://prowlarr.seintz.lan {
+    reverse_proxy 192.168.1.13:9696
+}
+
+http://plex.seintz.lan {
+    reverse_proxy 192.168.1.13:32400
+}
+
+http://portainer.seintz.lan {
+    reverse_proxy 192.168.1.13:9000
+}
+
+http://adguard.seintz.lan {
+    reverse_proxy 192.168.1.12:5580
+}
