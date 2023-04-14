@@ -1,31 +1,39 @@
-http://torrent.seintz.lan {
+http://torrent.seintz.local {
     reverse_proxy 192.168.1.13:9091
 }
 
-http://radarr.seintz.lan {
+http://radarr.seintz.local {
     reverse_proxy 192.168.1.13:7878
 }
 
-http://sonarr.seintz.lan {
+http://sonarr.seintz.local {
     reverse_proxy 192.168.1.13:8989
 }
 
-http://bazarr.seintz.lan {
+http://bazarr.seintz.local {
     reverse_proxy 192.168.1.13:6767
 }
 
-http://prowlarr.seintz.lan {
+http://prowlarr.seintz.local {
     reverse_proxy 192.168.1.13:9696
 }
 
-http://plex.seintz.lan {
+http://plex.seintz.local {
     reverse_proxy 192.168.1.13:32400
 }
 
-http://portainer.seintz.lan {
+http://portainer.seintz.local {
     reverse_proxy 192.168.1.13:9000
 }
 
-http://adguard.seintz.lan {
+http://adguard.seintz.local {
     reverse_proxy 192.168.1.12:5580
+}
+
+http://paperless.seintz.local {
+    reverse_proxy 192.168.1.13:7000
+}
+
+http://jellyfin.seintz.local {
+    reverse_proxy 192.168.1.13:8096
 }
