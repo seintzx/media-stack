@@ -1,0 +1,18 @@
+---
+version: "3"
+services:
+  paperless:
+    image: lscr.io/linuxserver/paperless-ngx:latest
+    container_name: paperless
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/odroid/compose/paperless/conf/config:/config
+      - /mnt/storage/odroid/compose/paperless/conf/data:/data
+    environment:
+        TZ: Europe/Rome
+        PUID: 1000
+        PGID: 1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+        - 7000:8000
