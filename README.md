@@ -1,7 +1,7 @@
-# compose
+# media server
 
-docker-compose files I use in my media server
+`compose.yml` contains the docker-compose of all docker I use in my media server
 
-# config
+`appdata/` contains the config file of the docker images
 
-some useful config for my raspberry/odroid
+`terminal-conf` contains config file for the raspberry

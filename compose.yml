@@ -14,6 +14,15 @@ x-commons: &commons
     - media
   restart: unless-stopped
 
+x-qcommons: &qcommons
+  environment:
+    TZ: $TZ
+    PUID: $PUID
+    PGID: $PGID
+    UMASK_SET: 002
+  network_mode: "service:gluetun"
+  restart: unless-stopped
+
 services:
   portainer:
     <<: *commons
@@ -26,17 +35,31 @@ services:
     ports:
       - 9000:9000
 
-  qbittorrent:
+  gluetun:
     <<: *commons
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - $CONFIGDIR/gluetun:/gluetun
+    environment:
+      VPN_SERVICE_PROVIDER: mullvad
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: $MULLVADKEY
+      WIREGUARD_ADDRESSES: $MULLVADIP
+    ports:
+      - 8080:8080 #qbittorrent
+
+  qbittorrent:
+    <<: *qcommons
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     volumes:
       - $CONFIGDIR/torrent:/config
       - $MEDIADIR/downloads:/downloads
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
 
   prowlarr:
     <<: *commons
