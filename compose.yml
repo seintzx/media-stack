@@ -1,0 +1,121 @@
+version: "3.9"
+
+networks:
+  media:
+    name: media
+    driver: bridge
+
+x-commons: &commons
+  environment:
+    TZ: $TZ
+    PUID: $PUID
+    PGID: $PGID
+  networks:
+    - media
+  restart: unless-stopped
+
+services:
+  portainer:
+    <<: *commons
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $CONFIGDIR/portainer:/data
+    ports:
+      - 9000:9000
+
+  qbittorrent:
+    <<: *commons
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    volumes:
+      - $CONFIGDIR/torrent:/config
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+
+  prowlarr:
+    <<: *commons
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    volumes:
+      - $CONFIGDIR/prowlarr:/config
+    ports:
+      - 9696:9696
+
+  jellyfin:
+    <<: *commons
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    volumes:
+      - $CONFIGDIR/jellyfin:/config
+      - $MEDIADIR/tv:/tv
+      - $MEDIADIR/movies:/movies
+    ports:
+      - 8096:8096
+
+  sonarr:
+    <<: *commons
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    volumes:
+      - $CONFIGDIR/sonarr:/config
+      - $MEDIADIR/tv:/tv
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 8989:8989
+
+  radarr:
+    <<: *commons
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - $CONFIGDIR/radarr:/config
+      - $MEDIADIR/movies:/movies
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 7878:7878
+
+  bazarr:
+    <<: *commons
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    volumes:
+      - $CONFIGDIR/bazarr:/config
+      - $MEDIADIR/movies:/movies
+      - $MEDIADIR/tv:/tv
+    ports:
+        - 6767:6767
+
+  watchtower:
+    <<: *commons
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $CONFIGDIR/watchtower:/config
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_REMOVE_VOLUMES: "true"
+      WATCHTOWER_INCLUDE_STOPPED: "true"
+      WATCHTOWER_NO_STARTUP_MESSAGE: "false"
+      WATCHTOWER_SCHEDULE: "0 0 6 * * *"
+
+#  dockergc:
+#    <<: *commons
+#    image: clockworksoul/docker-gc-cron:latest
+#    container_name: dockergc
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - $CONFIGDIR/dockergc/docker-gc-exclude:/etc/docker-gc-exclude
+#    environment:
+#      CRON: 0 0 7 * * *
+#      FORCE_IMAGE_REMOVAL: 1
+#      FORCE_CONTAINER_REMOVAL: 0
+#      GRACE_PERIOD_SECONDS: 604800
+#      DRY_RUN: 0
+#      CLEAN_UP_VOLUMES: 1
