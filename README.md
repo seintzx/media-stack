@@ -8,4 +8,5 @@
 
 ## resources
 
-- [guide](https://www.smarthomebeginner.com/docker-media-server-2022/)
+- [media server guide](https://www.smarthomebeginner.com/docker-media-server-2022/)
+- [gluetun guide](https://www.smarthomebeginner.com/gluetun-docker-guide/)
