@@ -20,7 +20,9 @@ x-qcommons: &qcommons
     PUID: $PUID
     PGID: $PGID
     UMASK_SET: 002
-  network_mode: "service:gluetun"
+  # network_mode: "service:gluetun"
+  networks:
+    - media
   restart: unless-stopped
 
 services:
@@ -35,25 +37,25 @@ services:
     ports:
       - 9000:9000
 
-  gluetun:
-    <<: *commons
-    image: qmcgaw/gluetun
-    container_name: gluetun
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun
-    volumes:
-      - $CONFIGDIR/gluetun:/gluetun
-    environment:
-      VPN_SERVICE_PROVIDER: mullvad
-      VPN_TYPE: wireguard
-      WIREGUARD_PRIVATE_KEY: $MULLVADKEY
-      WIREGUARD_ADDRESSES: $MULLVADIP
-    ports:
-      - 8080:8080 #qbittorrent
-      - 6881:6881
-      - 6881:6881/udp
+  # gluetun:
+  #   <<: *commons
+  #   image: qmcgaw/gluetun
+  #   container_name: gluetun
+  #   cap_add:
+  #     - NET_ADMIN
+  #   devices:
+  #     - /dev/net/tun
+  #   volumes:
+  #     - $CONFIGDIR/gluetun:/gluetun
+  #   environment:
+  #     VPN_SERVICE_PROVIDER: mullvad
+  #     VPN_TYPE: wireguard
+  #     WIREGUARD_PRIVATE_KEY: $MULLVADKEY
+  #     WIREGUARD_ADDRESSES: $MULLVADIP
+  #   ports:
+  #     - 8080:8080 #qbittorrent
+  #     - 6881:6881
+  #     - 6881:6881/udp
 
   qbittorrent:
     <<: *qcommons
@@ -62,11 +64,15 @@ services:
     volumes:
       - $CONFIGDIR/torrent:/config
       - $MEDIADIR/downloads:/downloads
-    healthcheck:
-        test: "curl -sf https://example.com || exit 1"
-        interval: 1m
-        timeout: 10s
-        retries: 1
+    ports:
+      - 9091:9091
+      - 6881:6881
+      - 6881:6881/udp
+    # healthcheck:
+    #     test: "curl -sf https://example.com || exit 1"
+    #     interval: 1m
+    #     timeout: 10s
+    #     retries: 1
 
   prowlarr:
     <<: *commons
