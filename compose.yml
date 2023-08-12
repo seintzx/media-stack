@@ -37,35 +37,15 @@ services:
     ports:
       - 9000:9000
 
-  # gluetun:
-  #   <<: *commons
-  #   image: qmcgaw/gluetun
-  #   container_name: gluetun
-  #   cap_add:
-  #     - NET_ADMIN
-  #   devices:
-  #     - /dev/net/tun
-  #   volumes:
-  #     - $CONFIGDIR/gluetun:/gluetun
-  #   environment:
-  #     VPN_SERVICE_PROVIDER: mullvad
-  #     VPN_TYPE: wireguard
-  #     WIREGUARD_PRIVATE_KEY: $MULLVADKEY
-  #     WIREGUARD_ADDRESSES: $MULLVADIP
-  #   ports:
-  #     - 8080:8080 #qbittorrent
-  #     - 6881:6881
-  #     - 6881:6881/udp
-
   qbittorrent:
-    <<: *qcommons
+    <<: *commons
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     volumes:
       - $CONFIGDIR/torrent:/config
       - $MEDIADIR/downloads:/downloads
     ports:
-      - 9091:9091
+      - 8080:8080
       - 6881:6881
       - 6881:6881/udp
     # healthcheck:
@@ -141,3 +121,22 @@ services:
       WATCHTOWER_NO_STARTUP_MESSAGE: "false"
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
 
+  # gluetun:
+  #   <<: *commons
+  #   image: qmcgaw/gluetun
+  #   container_name: gluetun
+  #   cap_add:
+  #     - NET_ADMIN
+  #   devices:
+  #     - /dev/net/tun
+  #   volumes:
+  #     - $CONFIGDIR/gluetun:/gluetun
+  #   environment:
+  #     VPN_SERVICE_PROVIDER: mullvad
+  #     VPN_TYPE: wireguard
+  #     WIREGUARD_PRIVATE_KEY: $MULLVADKEY
+  #     WIREGUARD_ADDRESSES: $MULLVADIP
+  #   ports:
+  #     - 8080:8080 #qbittorrent
+  #     - 6881:6881
+  #     - 6881:6881/udp
