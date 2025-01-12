@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   media:
     name: media
@@ -36,6 +34,15 @@ services:
       - $CONFIGDIR/portainer:/data
     ports:
       - 9000:9000
+
+#  flaresolverr:
+#    <<: *commons
+#    image: ghcr.io/flaresolverr/flaresolverr:latest
+#    container_name: flaresolverr
+#    volumes:
+#      - $CONFIGDIR/flaresolverr:/config
+#    ports:
+#      - 8191:8191
 
   qbittorrent:
     <<: *commons
@@ -121,22 +128,3 @@ services:
       WATCHTOWER_NO_STARTUP_MESSAGE: "false"
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
 
-  # gluetun:
-  #   <<: *commons
-  #   image: qmcgaw/gluetun
-  #   container_name: gluetun
-  #   cap_add:
-  #     - NET_ADMIN
-  #   devices:
-  #     - /dev/net/tun
-  #   volumes:
-  #     - $CONFIGDIR/gluetun:/gluetun
-  #   environment:
-  #     VPN_SERVICE_PROVIDER: mullvad
-  #     VPN_TYPE: wireguard
-  #     WIREGUARD_PRIVATE_KEY: $MULLVADKEY
-  #     WIREGUARD_ADDRESSES: $MULLVADIP
-  #   ports:
-  #     - 8080:8080 #qbittorrent
-  #     - 6881:6881
-  #     - 6881:6881/udp
