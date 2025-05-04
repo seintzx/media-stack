@@ -1,9 +1,12 @@
-# Ignore content of the media folders but not the folders themselves
+# Ignore all files in the media folders, but not the folders themselves
 /media/downloads/*
 /media/movies/*
 /media/tv/*
 
-# But keep the directories themselves
+# Except .md files (e.g., README.md)
+!/**/*.md
+
+# Keep the media directories themselves
 !/media/downloads
 !/media/movies
 !/media/tv
@@ -13,7 +16,6 @@
 /config/*/credentials.yml
 /config/*/passwords.json
 /config/*/.secret
-/config/*/docker-compose.override.yml
 
 # Ignore Docker related files
 *.log
@@ -30,6 +32,4 @@ Thumbs.db
 # Ignore temporary or cache files
 *.bak
 *.tmp
-*.swp
-*.swm
 .cache/
