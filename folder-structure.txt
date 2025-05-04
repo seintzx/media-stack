@@ -1,23 +1,27 @@
-/your-project-root
-│
-├── docker-compose.yml
-├── .env                     # Contains PUID, PGID, TZ, CONFIGDIR, MEDIADIR, etc.
-│
-├── config                   # $CONFIGDIR
-│   ├── adguard
-│   │   ├── work/
-│   │   └── conf/
+media-stack/
+├── .env                        # Environment variables (TZ, PUID, PGID, etc.)
+├── docker-compose.yml          # Your main Docker Compose configuration
+├── .gitignore                  # Ignore non-essential files (e.g., media content)
+├── README.md                   # Project overview and setup instructions
+
+├── config/                     # All container configs (mapped via $CONFIGDIR)
+│   ├── adguard/
+│   │   ├── conf/
+│   │   └── work/
 │   ├── bazarr/
 │   ├── jellyfin/
 │   ├── portainer/
 │   ├── prowlarr/
-│   ├── qbittorrent/
 │   ├── radarr/
 │   ├── sonarr/
+│   ├── torrent/                # qBittorrent
 │   ├── watchtower/
 │   └── wireguard/
-│
-└── media                    # $MEDIADIR
-    ├── downloads/
-    ├── movies/
-    └── tv/
+
+├── media/                      # Media folders (mapped via $MEDIADIR)
+│   ├── downloads/
+│   │   └── README.md           # Placeholder to keep folder structure
+│   ├── movies/
+│   │   └── README.md
+│   └── tv/
+│       └── README.md
