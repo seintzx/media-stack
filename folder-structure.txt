@@ -1,0 +1,23 @@
+/your-project-root
+│
+├── docker-compose.yml
+├── .env                     # Contains PUID, PGID, TZ, CONFIGDIR, MEDIADIR, etc.
+│
+├── config                   # $CONFIGDIR
+│   ├── adguard
+│   │   ├── work/
+│   │   └── conf/
+│   ├── bazarr/
+│   ├── jellyfin/
+│   ├── portainer/
+│   ├── prowlarr/
+│   ├── qbittorrent/
+│   ├── radarr/
+│   ├── sonarr/
+│   ├── watchtower/
+│   └── wireguard/
+│
+└── media                    # $MEDIADIR
+    ├── downloads/
+    ├── movies/
+    └── tv/
