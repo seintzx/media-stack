@@ -1,32 +1,30 @@
 version: "3.8"
 
+# Network configuration
 networks:
   media:
     name: media
     driver: bridge
+  wireguard_network:
+    driver: bridge
+    internal: true  # Isolated network for WireGuard only
 
+# Common configuration for most containers
 x-commons: &commons
   environment:
     TZ: $TZ
     PUID: $PUID
     PGID: $PGID
   networks:
-    - media
+    - wireguard_network
   restart: unless-stopped
-  dns:
-    - 172.20.0.2  # IP of AdGuard container on media network (update if different)
+  labels:
+    - "com.centurylinklabs.watchtower.enable=true"  # Watchtower will manage updates for containers
 
-x-qcommons: &qcommons
-  environment:
-    TZ: $TZ
-    PUID: $PUID
-    PGID: $PGID
-    UMASK_SET: 002
-  networks:
-    - media
-  restart: unless-stopped
+# Service definitions
 
 services:
+  # Management UI and monitoring tools
   portainer:
     <<: *commons
     image: portainer/portainer-ce:latest
@@ -37,85 +35,6 @@ services:
       - $CONFIGDIR/portainer:/data
     ports:
       - 9000:9000
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  qbittorrent:
-    <<: *commons
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    volumes:
-      - $CONFIGDIR/torrent:/config
-      - $MEDIADIR/downloads:/downloads
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  prowlarr:
-    <<: *commons
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    volumes:
-      - $CONFIGDIR/prowlarr:/config
-    ports:
-      - 9696:9696
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  jellyfin:
-    <<: *commons
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    volumes:
-      - $CONFIGDIR/jellyfin:/config
-      - $MEDIADIR/tv:/tv
-      - $MEDIADIR/movies:/movies
-    ports:
-      - 8096:8096
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  sonarr:
-    <<: *commons
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    volumes:
-      - $CONFIGDIR/sonarr:/config
-      - $MEDIADIR/tv:/tv
-      - $MEDIADIR/downloads:/downloads
-    ports:
-      - 8989:8989
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  radarr:
-    <<: *commons
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    volumes:
-      - $CONFIGDIR/radarr:/config
-      - $MEDIADIR/movies:/movies
-      - $MEDIADIR/downloads:/downloads
-    ports:
-      - 7878:7878
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  bazarr:
-    <<: *commons
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    volumes:
-      - $CONFIGDIR/bazarr:/config
-      - $MEDIADIR/movies:/movies
-      - $MEDIADIR/tv:/tv
-    ports:
-      - 6767:6767
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   watchtower:
     <<: *commons
@@ -131,28 +50,89 @@ services:
       WATCHTOWER_NO_STARTUP_MESSAGE: "false"
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
       WATCHTOWER_LABEL_ENABLE: "true"
-    dns: 8.8.8.8  # Override inherited DNS (avoids depending on AdGuard)
+    dns: 8.8.8.8  # Fallback DNS in case AdGuard is unavailable
 
+  # Media services
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    network_mode: "host"  # Jellyfin bypasses WireGuard, uses the host network
+    volumes:
+      - $CONFIGDIR/jellyfin:/config
+      - $MEDIADIR/tv:/tv
+      - $MEDIADIR/movies:/movies
+    ports:
+      - 8096:8096  # Streaming port for Jellyfin
+
+  sonarr:
+    <<: *commons
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    volumes:
+      - $CONFIGDIR/sonarr:/config
+      - $MEDIADIR/tv:/tv
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 8989:8989
+
+  radarr:
+    <<: *commons
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - $CONFIGDIR/radarr:/config
+      - $MEDIADIR/movies:/movies
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 7878:7878
+
+  bazarr:
+    <<: *commons
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    volumes:
+      - $CONFIGDIR/bazarr:/config
+      - $MEDIADIR/movies:/movies
+      - $MEDIADIR/tv:/tv
+    ports:
+      - 6767:6767
+
+  qbittorrent:
+    <<: *commons
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    volumes:
+      - $CONFIGDIR/torrent:/config
+      - $MEDIADIR/downloads:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+
+  prowlarr:
+    <<: *commons
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    volumes:
+      - $CONFIGDIR/prowlarr:/config
+    ports:
+      - 9696:9696
+
+  # Networking & security
   wireguard:
+    <<: *commons
     image: lscr.io/linuxserver/wireguard
     container_name: wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
     volumes:
       - $CONFIGDIR/wireguard:/config
       - /lib/modules:/lib/modules
     ports:
-      - "51820:51820/udp"
+      - "51820:51820/udp"  # WireGuard VPN port
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-    networks:
-      - media
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "ping", "-c", "1", "8.8.8.8"]
       interval: 30s
@@ -160,14 +140,22 @@ services:
       retries: 3
       start_period: 10s
 
+  # AdGuard container for DNS filtering and blocking
   adguard:
+    <<: *commons
     image: adguard/adguardhome
     container_name: adguard
     depends_on:
       wireguard:
         condition: service_healthy
-    network_mode: "service:wireguard"
     volumes:
       - $CONFIGDIR/adguard/work:/opt/adguardhome/work
       - $CONFIGDIR/adguard/conf:/opt/adguardhome/conf
     restart: unless-stopped
+    network_mode: "host"  # AdGuard uses host network mode
+    dns: 8.8.8.8  # Fallback DNS in case AdGuard is unavailable
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
