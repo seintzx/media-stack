@@ -13,6 +13,8 @@ x-commons: &commons
   networks:
     - media
   restart: unless-stopped
+  dns:
+    - 172.20.0.2  # IP of AdGuard container on media network (update if different)
 
 x-qcommons: &qcommons
   environment:
@@ -20,7 +22,6 @@ x-qcommons: &qcommons
     PUID: $PUID
     PGID: $PGID
     UMASK_SET: 002
-  # network_mode: "service:gluetun"
   networks:
     - media
   restart: unless-stopped
@@ -36,6 +37,8 @@ services:
       - $CONFIGDIR/portainer:/data
     ports:
       - 9000:9000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   qbittorrent:
     <<: *commons
@@ -48,6 +51,8 @@ services:
       - 8080:8080
       - 6881:6881
       - 6881:6881/udp
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   prowlarr:
     <<: *commons
@@ -57,6 +62,8 @@ services:
       - $CONFIGDIR/prowlarr:/config
     ports:
       - 9696:9696
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   jellyfin:
     <<: *commons
@@ -68,6 +75,8 @@ services:
       - $MEDIADIR/movies:/movies
     ports:
       - 8096:8096
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   sonarr:
     <<: *commons
@@ -79,6 +88,8 @@ services:
       - $MEDIADIR/downloads:/downloads
     ports:
       - 8989:8989
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   radarr:
     <<: *commons
@@ -90,6 +101,8 @@ services:
       - $MEDIADIR/downloads:/downloads
     ports:
       - 7878:7878
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   bazarr:
     <<: *commons
@@ -101,6 +114,8 @@ services:
       - $MEDIADIR/tv:/tv
     ports:
       - 6767:6767
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   watchtower:
     <<: *commons
@@ -115,6 +130,8 @@ services:
       WATCHTOWER_INCLUDE_STOPPED: "true"
       WATCHTOWER_NO_STARTUP_MESSAGE: "false"
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
+      WATCHTOWER_LABEL_ENABLE: "true"
+    dns: 8.8.8.8  # Override inherited DNS (avoids depending on AdGuard)
 
   wireguard:
     image: lscr.io/linuxserver/wireguard
