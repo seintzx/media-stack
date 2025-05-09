@@ -1,5 +1,6 @@
 config/*
 media/*
+.env
 
 # Ignore Docker related files
 *.log
