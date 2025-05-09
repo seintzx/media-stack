@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Base project directory
-PROJECT_ROOT="./your-project-root"
+PROJECT_ROOT="."
 CONFIG_DIR="$PROJECT_ROOT/config"
 MEDIA_DIR="$PROJECT_ROOT/media"
 

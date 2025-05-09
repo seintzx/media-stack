@@ -1,0 +1,19 @@
+config/*
+media/*
+
+# Ignore Docker related files
+*.log
+*.pid
+*.swp
+docker-compose.override.yml
+
+# Ignore system files and editor configurations
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Ignore temporary or cache files
+*.bak
+*.tmp
+.cache/

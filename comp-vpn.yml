@@ -5,7 +5,7 @@ networks:
     driver: bridge
   wireguard_network:
     driver: bridge
-    # internal: true
+    internal: true
 
 # Common configuration for most containers
 x-commons: &commons
@@ -135,36 +135,36 @@ services:
       - wireguard_network
 
   # Networking & security
-#  wireguard:
-#    <<: *commons
-#    image: lscr.io/linuxserver/wireguard
-#    container_name: wireguard
-#    cap_add:
-#      - NET_ADMIN
-#      - SYS_MODULE
-#    volumes:
-#      - ${CONFIGDIR}/wireguard:/config
-#      - /lib/modules:/lib/modules
-#    ports:
-#      - "51820:51820/udp"
-#    sysctls:
-#      - net.ipv4.conf.all.src_valid_mark=1
-#    healthcheck:
-#      test: ["CMD", "ping", "-c", "1", "8.8.8.8"]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 10s
-#    networks:
-#      - wireguard_network
+  wireguard:
+    <<: *commons
+    image: lscr.io/linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ${CONFIGDIR}/wireguard:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - "51820:51820/udp"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "8.8.8.8"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - wireguard_network
 
   adguard:
     <<: *commons
     image: adguard/adguardhome
     container_name: adguard
-#    depends_on:
-#      wireguard:
-#        condition: service_healthy
+    depends_on:
+      wireguard:
+        condition: service_healthy
     volumes:
       - ${CONFIGDIR}/adguard/work:/opt/adguardhome/work
       - ${CONFIGDIR}/adguard/conf:/opt/adguardhome/conf
