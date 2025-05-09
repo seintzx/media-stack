@@ -3,9 +3,6 @@ networks:
   media:
     name: media
     driver: bridge
-  wireguard_network:
-    driver: bridge
-    # internal: true
 
 # Common configuration for most containers
 x-commons: &commons
@@ -54,7 +51,7 @@ services:
     <<: *commons
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
-    network_mode: "host"
+    #network_mode: "host"
     volumes:
       - ${CONFIGDIR}/jellyfin:/config
       - ${MEDIADIR}/tv:/tv
@@ -82,7 +79,7 @@ services:
       - 6881:6881
       - 6881:6881/udp
     networks:
-      - wireguard_network
+      - media
 
   sonarr:
     <<: *commons
@@ -95,7 +92,7 @@ services:
     ports:
       - 8989:8989
     networks:
-      - wireguard_network
+      - media
 
   radarr:
     <<: *commons
@@ -108,7 +105,7 @@ services:
     ports:
       - 7878:7878
     networks:
-      - wireguard_network
+      - media
 
   bazarr:
     <<: *commons
@@ -121,7 +118,7 @@ services:
     ports:
       - 6767:6767
     networks:
-      - wireguard_network
+      - media
 
   prowlarr:
     <<: *commons
@@ -132,7 +129,7 @@ services:
     ports:
       - 9696:9696
     networks:
-      - wireguard_network
+      - media
 
   # Networking & security
 #  wireguard:
@@ -175,3 +172,4 @@ services:
       interval: 30s
       retries: 3
       start_period: 10s
+
