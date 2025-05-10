@@ -51,20 +51,13 @@ services:
     <<: *commons
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
-    #network_mode: "host"
+    network_mode: "host"
     volumes:
       - ${CONFIGDIR}/jellyfin:/config
       - ${MEDIADIR}/tv:/tv
       - ${MEDIADIR}/movies:/movies
     ports:
       - 8096:8096
-    restart: unless-stopped
-    environment:
-      TZ: ${TZ}
-      PUID: ${PUID}
-      PGID: ${PGID}
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   # Services going through wireguard
   qbittorrent:
@@ -168,7 +161,7 @@ services:
     restart: unless-stopped
     network_mode: "host"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "ping", "-c","1", "1.1.1.1"]
       interval: 30s
       retries: 3
       start_period: 10s
