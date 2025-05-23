@@ -152,17 +152,28 @@ services:
     <<: *commons
     image: adguard/adguardhome
     container_name: adguard
-#    depends_on:
-#      wireguard:
-#        condition: service_healthy
     volumes:
       - ${CONFIGDIR}/adguard/work:/opt/adguardhome/work
       - ${CONFIGDIR}/adguard/conf:/opt/adguardhome/conf
-    restart: unless-stopped
-    network_mode: "host"
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 8081:80
+      - 8443:443
+    networks:
+      - media
     healthcheck:
       test: ["CMD", "ping", "-c","1", "1.1.1.1"]
       interval: 30s
       retries: 3
       start_period: 10s
 
+  caddy:
+    <<: *commons
+    image: caddy:2
+    container_name: caddy
+    network_mode: "host"
+    volumes:
+      - ${CONFIGDIR}/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${CONFIGDIR}/caddy/data:/data
+      - ${CONFIGDIR}/caddy/config:/config
