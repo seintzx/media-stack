@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source and destination folders
-SRC="/path/to/source_folder"
-DEST="/path/to/backup_folder"
+SRC="${HOME}/media-stack/config"
+DEST="${HOME}/media-backup"
 
 # Timestamp for this backup
 TS=$(date +'%Y%m%d_%H%M%S')
